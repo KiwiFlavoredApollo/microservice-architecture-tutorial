@@ -22,8 +22,8 @@ spring:
         native:
           search-locations: file://${user.home}/Desktop/Work/native-file-repo
         git: #default
-          uri: file:///C:/Users/swkan/Documents/LG CNS Bootcamp/spring-config-git
-#          uri: https://github.com/joneconsulting/spring-cloud-config
+#          uri: file:///C:/Users/swkan/Documents/LG CNS Bootcamp/spring-config-git
+          uri: https://github.com/joneconsulting/spring-cloud-config
           default-label: master
 #          username: [username]
 #          password: [password]
@@ -39,4 +39,5 @@ management:
           - health
           - beans
           - info
+          - httpexchanges
           - busrefresh
