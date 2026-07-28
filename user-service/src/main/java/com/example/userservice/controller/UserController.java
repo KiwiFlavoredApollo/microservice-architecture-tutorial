@@ -4,6 +4,7 @@ import com.example.userservice.dto.UserDto;
 import com.example.userservice.jpa.UserEntity;
 import com.example.userservice.service.UserService;
 import com.example.userservice.vo.Greeting;
+import com.example.userservice.vo.RequestCompany;
 import com.example.userservice.vo.RequestUser;
 import com.example.userservice.vo.ResponseUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +42,14 @@ public class UserController {
     @GetMapping("/users/message")
     public String getMessage() {
         return env.getProperty("message.greeting");
+    }
+
+    @GetMapping("/users/company")
+    public RequestCompany getCompany() {
+        return RequestCompany.builder()
+                .name(env.getProperty("company.name"))
+                .ceo(env.getProperty("company.ceo"))
+                .build();
     }
 
     @GetMapping("/health-check")
