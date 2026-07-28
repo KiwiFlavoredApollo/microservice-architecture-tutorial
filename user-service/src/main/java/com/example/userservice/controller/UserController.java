@@ -38,6 +38,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/users/message")
+    public String getMessage() {
+        return env.getProperty("message.greeting");
+    }
+
     @GetMapping("/health-check")
     public String status() {
         return String.format("It's Working in User Service"
