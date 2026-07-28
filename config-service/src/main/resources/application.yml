@@ -16,7 +16,7 @@ spring:
       server:
         git:
           uri: https://github.com/KiwiFlavoredApollo/spring-cloud-config
-          default-label: master
+          default-label: main
 
 management:
   endpoints:
