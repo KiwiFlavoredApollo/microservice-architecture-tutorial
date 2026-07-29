@@ -57,6 +57,8 @@ token:
 
 order-service:
   url: http://order-service/order-service/%s/orders
+  exception:
+    order-is-empty: "Use's order is empty"
 
 management:
   endpoints:
