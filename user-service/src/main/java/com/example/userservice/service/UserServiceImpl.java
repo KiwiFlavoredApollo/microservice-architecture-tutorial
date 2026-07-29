@@ -92,25 +92,6 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
         List<ResponseOrder> orderList = new ArrayList<>();
 
-        /* using a resttemplate */
-//        String orderUrl = String.format(env.getProperty("order-service.url"), userId);
-//        ResponseEntity<List<ResponseOrder>> orderListResponse =
-//                restTemplate.exchange(orderUrl, HttpMethod.GET, null,
-//                                            new ParameterizedTypeReference<List<ResponseOrder>>() {
-//                });
-//        List<ResponseOrder> orderList = orderListResponse.getBody();
-
-        /* using a feignclient with logger */
-//        List<ResponseOrder> orderList = null;
-//        try {
-//            orderList = orderServiceClient.getOrders(userId);
-//        } catch (FeignException ex) {
-//            log.error(ex.getMessage());
-//        }
-
-        /* using a feignclient with errordecoder */
-//        orderList = orderServiceClient.getOrders(userId);
-
         /* circuitbreaker */
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker1");
         orderList = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),
