@@ -13,7 +13,7 @@ spring:
     base-url: http://127.0.0.1:9411
     enabled: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 172.30.1.13:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -25,7 +25,7 @@ spring:
       path: /h2-console
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://minecraftservers.local:13306/appdb
+    url: jdbc:mariadb://172.30.1.13:13306/appdb
     username: appuser
     password: apppassword
   jpa:
