@@ -90,12 +90,13 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("User not found");
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
-        List<ResponseOrder> orderList = new ArrayList<>();
+        List<ResponseOrder> orderList;
 
-        /* circuitbreaker */
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker1");
-        orderList = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),
-                throwable -> new ArrayList<>());
+        orderList = circuitBreaker.run(
+                () -> orderServiceClient.getOrders(userId),
+                throwable -> new ArrayList<>()
+        );
 
         userDto.setOrders(orderList);
 
