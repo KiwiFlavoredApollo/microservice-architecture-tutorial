@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,8 @@ public class OrderProducerService {
             new KafkaOrderDto.Field("string", true, "product_id"),
             new KafkaOrderDto.Field("int32", true, "qty"),
             new KafkaOrderDto.Field("int32", true, "total_price"),
-            new KafkaOrderDto.Field("int32", true, "unit_price")
+            new KafkaOrderDto.Field("int32", true, "unit_price"),
+            new KafkaOrderDto.Field("string", true, "sent_from")
     );
 
     private static final KafkaOrderDto.Schema SCHEMA = KafkaOrderDto.Schema.builder()
@@ -32,9 +34,12 @@ public class OrderProducerService {
             .name("orders")
             .build();
 
+    private final Environment env;
+
     @Autowired
-    public OrderProducerService(KafkaTemplate<String, String> kafkaTemplate) {
+    public OrderProducerService(KafkaTemplate<String, String> kafkaTemplate, Environment env) {
         this.kafkaTemplate = kafkaTemplate;
+        this.env = env;
     }
 
     public OrderDto send(String topic, OrderDto orderDto) {
@@ -60,6 +65,7 @@ public class OrderProducerService {
         builder.qty(orderDto.getQty());
         builder.unit_price(orderDto.getUnitPrice());
         builder.total_price(orderDto.getTotalPrice());
+        builder.sent_from(env.getProperty("local.server.port"));
         KafkaOrderDto.Payload payload = builder.build();
 
         KafkaOrderDto kafkaOrderDto = new KafkaOrderDto(SCHEMA, payload);

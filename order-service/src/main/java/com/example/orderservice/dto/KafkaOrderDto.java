@@ -39,5 +39,6 @@ public class KafkaOrderDto implements Serializable {
         private Integer qty;
         private Integer unit_price;
         private Integer total_price;
+        private String sent_from;
     }
 }
