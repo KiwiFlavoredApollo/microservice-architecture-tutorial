@@ -82,6 +82,7 @@ public class OrderController {
                 Thread.sleep(10000);
                 throw new Exception("장애 발생 - Timeout");
             }
+
         } catch (InterruptedException ex) {
             log.warn(ex.getMessage());
         }
