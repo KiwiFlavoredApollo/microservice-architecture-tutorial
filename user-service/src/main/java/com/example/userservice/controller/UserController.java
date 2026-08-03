@@ -6,8 +6,9 @@ import com.example.userservice.service.UserService;
 import com.example.userservice.vo.Greeting;
 import com.example.userservice.vo.RequestUser;
 import com.example.userservice.vo.ResponseUser;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -31,11 +32,14 @@ public class UserController {
 
     private UserService userService;
 
+    private Counter viewCounter;
+
     @Autowired
-    public UserController(Environment env, Greeting greeting, UserService userService) {
+    public UserController(Environment env, Greeting greeting, UserService userService, MeterRegistry meterRegistry) {
         this.env = env;
         this.greeting = greeting;
         this.userService = userService;
+        this.viewCounter = meterRegistry.counter("users_view");
     }
 
     @GetMapping("/health-check")
@@ -74,6 +78,8 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity getUsers() {
+        viewCounter.increment();
+
         Iterable<UserEntity> userList = userService.getUserByAll();
 
         List<ResponseUser> result = new ArrayList<>();
