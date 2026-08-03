@@ -71,6 +71,11 @@ management:
           - info
           - busrefresh
           - env
+          - prometheus
+          - metrics
+  endpoint:
+    health:
+      show-details: ALWAYS
   tracing:
     sampling:
       probability: 1.0
