@@ -41,6 +41,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
 
+            System.out.printf(
+                    "%s %s from %s%n",
+                    req.getMethod(),
+                    req.getRequestURI(),
+                    req.getRemoteAddr()
+            );
+
             RequestLogin creds = new ObjectMapper().readValue(req.getInputStream(), RequestLogin.class);
 
             return getAuthenticationManager().authenticate(
