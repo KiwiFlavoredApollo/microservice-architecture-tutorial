@@ -24,7 +24,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        log.debug("{} {} from {}", request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
+        log.info("{} {} from {}", request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
 
         filterChain.doFilter(request, response);
     }
