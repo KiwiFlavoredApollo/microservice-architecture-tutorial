@@ -1,10 +1,13 @@
 package com.example.userservice.security;
 
 import com.example.userservice.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,25 +42,31 @@ public class WebSecurity {
 
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
-        http.csrf( (csrf) -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/h2-console/**").permitAll()
-                    .requestMatchers("/actuator/**").permitAll()
-                    .requestMatchers("/health-check/**").permitAll()
-                    .requestMatchers("/welcome/**").permitAll()
-                    .requestMatchers("/**").access(
-                            new WebExpressionAuthorizationManager(
-                                    "hasIpAddress('127.0.0.1')"
-                                            + " or hasIpAddress('::1')"
-                                            + " or hasIpAddress('172.30.1.0/24')"
-                                            + " or hasIpAddress('::1')"))
-                    .anyRequest().authenticated()
+        http.csrf((csrf) -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/health-check/**").permitAll()
+                        .requestMatchers("/welcome/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers("/**").access((authentication, context) -> {
+                            boolean granted = ALLOWED_IP_ADDRESS_MATCHER.matches(context.getRequest());
+
+                            HttpServletRequest request = context.getRequest();
+
+                            System.out.println("=================================");
+                            System.out.println("Remote Address = " + request.getRemoteAddr());
+                            System.out.println("Remote Host = " + request.getRemoteHost());
+                            System.out.println("=================================");
+
+                            return new AuthorizationDecision(true);
+                        })
                 )
-            .authenticationManager(authenticationManager)
-            .addFilter(getAuthenticationFilter(authenticationManager))
-            .httpBasic(Customizer.withDefaults())  // ← Basic 인증 추가
-            .headers((headers) -> headers
-                .frameOptions((frameOptions) -> frameOptions.sameOrigin()));
+                .authenticationManager(authenticationManager)
+                .addFilter(getAuthenticationFilter(authenticationManager))
+                .httpBasic(Customizer.withDefaults())  // ← Basic 인증 추가
+                .headers((headers) -> headers
+                        .frameOptions((frameOptions) -> frameOptions.sameOrigin()));
 
         return http.build();
     }
